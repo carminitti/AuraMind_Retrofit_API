@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#86A6A3"
+    android:padding="20dp"
+    android:gravity="center_horizontal">
+
+    <!-- Título (fixo mais no alto) -->
+    <TextView
+        android:id="@+id/tvTituloPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bem-vindo ao meu perfil"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center"/>
+
+    <!-- Espaço para empurrar os ícones para o meio da tela -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- Ícones principais (fone e play) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="40dp">
+
+        <ImageButton
+            android:id="@+id/btnFone"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_headphone_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Fone de ouvido"
+            android:layout_marginEnd="40dp"/>
+
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_video_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Play"/>
+    </LinearLayout>
+
+    <!-- Espaço abaixo dos ícones -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- Barra de Navegação Inferior -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="4"
+        android:background="@android:color/white">
+
+        <ImageButton
+            android:id="@+id/navAgenda"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_music_time_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Agenda"/>
+
+        <ImageButton
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_home_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Home"/>
+
+        <ImageButton
+            android:id="@+id/navProfile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_person2_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Perfil"/>
+
+        <ImageButton
+            android:id="@+id/navSettings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_settings_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Configurações"/>
+    </LinearLayout>
+
+</LinearLayout>

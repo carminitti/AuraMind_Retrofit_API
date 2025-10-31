@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#86A6A3"
+    android:padding="20dp">
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/tvTituloFoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Espelho espelho meu!"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Voltar (ícone + texto) -->
+    <LinearLayout
+        android:id="@+id/btnVoltarRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:id="@+id/ivVoltar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back_android_48dp"
+            android:tint="@android:color/black"
+            android:contentDescription="Voltar" />
+
+        <TextView
+            android:id="@+id/tvVoltar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voltar"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
+
+    <!-- Pré-visualização OVAL recortada -->
+    <FrameLayout
+        android:id="@+id/previewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:foregroundGravity="center"
+        android:gravity="center">
+
+        <!-- Ajuste as dimensões do oval aqui (ex.: 360x280dp) -->
+
+
+
+        <!-- (Opcional) Moldura branca por cima -->
+        <ImageView
+            android:layout_width="360dp"
+            android:layout_height="280dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_camera_android_48dp"
+            android:contentDescription="@null" />
+    </FrameLayout>
+
+    <!-- Botão de Captura (ícone de câmera; você troca depois) -->
+    <ImageButton
+        android:id="@+id/btnCapturar"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:background="@drawable/ic_camera_android_48dp"
+        android:src="@android:drawable/ic_menu_camera"
+        android:tint="@android:color/white"
+        android:contentDescription="Capturar foto" />
+</LinearLayout>
+

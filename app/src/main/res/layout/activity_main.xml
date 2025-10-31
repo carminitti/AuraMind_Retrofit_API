@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="#88A7A4">
+
+    <!-- Título com nome do app -->
+    <TextView
+        android:id="@+id/textTitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="Seja bem-vindo ao"
+        android:textColor="@android:color/white"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/textTitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="AuraMind"
+        android:textColor="@android:color/white"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/txtTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Campo Login -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login :"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginRight="8dp"/>
+
+        <EditText
+            android:id="@+id/editLogin"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/edit_text"
+            android:padding="8dp"
+            android:inputType="textEmailAddress"/>
+    </LinearLayout>
+
+    <!-- Campo Senha -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Senha :"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginRight="8dp"/>
+
+        <EditText
+            android:id="@+id/editSenha"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/edit_text"
+            android:inputType="textPassword"
+            android:padding="8dp" />
+    </LinearLayout>
+
+    <!-- Botão Confirmar -->
+    <Button
+        android:id="@+id/btnConfirmar"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Confirmar"
+        android:backgroundTint="#85B8D6"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Links -->
+
+    <TextView
+        android:id="@+id/txtCriarConta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Não possui uma conta? Clique Aqui"
+        android:textColor="#0000FF"
+        android:textSize="14sp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/txtEsqueciSenha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Esqueci minha senha"
+        android:textColor="#0000FF"
+        android:textSize="14sp"
+        android:clickable="true"
+        android:focusable="true"/>
+</LinearLayout>

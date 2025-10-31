@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#86A6A3"
+    android:padding="20dp">
+
+    <!-- Título (2 linhas, centralizado) -->
+    <TextView
+        android:id="@+id/tvTituloAudio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Me conte com áudio\ncomo foi o seu dia"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        android:maxLines="2" />
+
+    <!-- Voltar (ícone + texto) -->
+    <LinearLayout
+        android:id="@+id/btnVoltarRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:layout_marginBottom="24dp">
+
+        <ImageView
+            android:id="@+id/ivVoltar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back_android_48dp"
+            android:tint="@android:color/black"
+            android:contentDescription="Voltar" />
+
+        <TextView
+            android:id="@+id/tvVoltar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voltar"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
+
+    <!-- Ícones centrais (sem espaço entre eles) -->
+    <LinearLayout
+        android:id="@+id/areaIcones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp">
+
+        <ImageButton
+            android:id="@+id/btnMic"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/ic_mic_off_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Microfone" />
+
+        <ImageButton
+            android:id="@+id/btnWave"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/ic_wave_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Onda de áudio" />
+    </LinearLayout>
+
+    <!-- Botão Enviar Áudio -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/btnEnviarAudio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#6200EE"
+            android:elevation="4dp"
+            android:padding="12dp"
+            android:text="🎤 Enviar Áudio para IA"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:id="@+id/tvResultado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="12dp"
+            android:text="Resultado aparecerá aqui..."
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-medium" />
+
+        <Button
+            android:id="@+id/btnUltimaEmocao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#03DAC5"
+            android:elevation="4dp"
+            android:padding="12dp"
+            android:text="🧠 Ver última emoção detectada"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+
+</LinearLayout>

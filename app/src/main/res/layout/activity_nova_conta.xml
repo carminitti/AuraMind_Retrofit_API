@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#789C9C"
+    android:padding="24dp">
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seja bem-vindo ao\nAuraMind"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Campo Login -->
+
+    <!-- Campo Senha -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="14dp"
+            android:text="Login:"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/editNLogin"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/edit_text"
+            android:inputType="textEmailAddress" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Senha:"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="10dp"/>
+
+        <EditText
+            android:id="@+id/editNSenha"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/edit_text"
+            android:inputType="textPassword"/>
+    </LinearLayout>
+
+    <!-- Campo Confirmação de Senha -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirmação de Senha:"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="8dp"/>
+
+        <EditText
+            android:id="@+id/editNConfirmaSenha"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/edit_text"
+            android:inputType="textPassword"/>
+    </LinearLayout>
+
+    <!-- Botão Próximo -->
+    <Button
+        android:id="@+id/btnNProximo"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Próximo"
+        android:backgroundTint="#87CEFA"
+        android:textColor="@android:color/black"/>
+
+</LinearLayout>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#789C9C"
+    android:gravity="center"
+    android:padding="24dp">
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seja bem-vindo ao seu diário!"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Ícones principais -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/btnLivro"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Livro"
+            android:src="@drawable/ic_book_android_48dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnMic"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="16dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Microfone"
+                android:src="@drawable/ic_microphone_android_48dp" />
+
+            <ImageButton
+                android:id="@+id/btnCamera"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="16dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Câmera"
+                android:src="@drawable/ic_camera_android_48dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Empurra a barra para o rodapé -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Barra de navegação inferior -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_gravity="bottom"
+        android:weightSum="4"
+        android:background="@android:color/white"
+        android:layout_marginTop="16dp">
+
+        <ImageButton
+            android:id="@+id/navAgenda"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_music_time_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Agenda" />
+
+        <ImageButton
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_home2_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Home" />
+
+        <ImageButton
+            android:id="@+id/navProfile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_person_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Perfil" />
+
+        <ImageButton
+            android:id="@+id/navSettings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_settings_android_48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Configurações" />
+    </LinearLayout>
+
+</LinearLayout>

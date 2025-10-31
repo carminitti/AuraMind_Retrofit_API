@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#86A6A3"
+    android:padding="20dp">
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/tvTituloDiario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Me conte como foi o seu dia"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Botão Voltar (linha clicável: ícone + texto) -->
+    <LinearLayout
+        android:id="@+id/btnVoltarRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:layout_marginBottom="12dp">
+
+        <ImageView
+            android:id="@+id/ivVoltar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back_android_48dp"
+            android:tint="@android:color/black"
+            android:contentDescription="Voltar"/>
+
+        <TextView
+            android:id="@+id/tvVoltar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voltar"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:layout_marginStart="6dp"/>
+    </LinearLayout>
+
+    <!-- Caixa grande para escrever -->
+    <EditText
+        android:id="@+id/etDiario"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:drawable/edit_text"
+        android:gravity="top|start"
+        android:hint="Escreva aqui..."
+        android:inputType="textMultiLine"
+        android:maxLength="2000"
+        android:overScrollMode="always"
+        android:padding="12dp"
+        android:scrollbars="vertical" />
+
+    <!-- Botão Enviar (ÚNICO) -->
+    <Button
+        android:id="@+id/btnEnviar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="enviar"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#2B4C7E"
+        android:textColor="@android:color/white"
+        android:padding="12dp"/>
+
+    <!-- Botões circulares (anterior / próximo) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnAnterior"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/ic_arrow_left_android_48dp"
+            android:contentDescription="Página anterior"
+            android:src="@android:drawable/ic_media_previous"
+            android:tint="@android:color/white" />
+
+        <ImageButton
+            android:id="@+id/btnProximo"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/ic_arrow_right_android_48dp"
+            android:contentDescription="Próxima página"
+            android:src="@android:drawable/ic_media_next"
+            android:tint="@android:color/white" />
+    </LinearLayout>
+
+</LinearLayout>

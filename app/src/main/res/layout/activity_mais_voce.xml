@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#86A6A3">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:gravity="center_horizontal">
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvTituloMais"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Me diga um pouco mais sobre você"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Linha dos dois botões com espaçamento igual nas laterais e entre eles -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp"
+            android:weightSum="6">
+
+            <!-- Espaço esquerdo -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Botão Esquerdo -->
+            <Button
+                android:id="@+id/btnAgoraNao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Agora não"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#5DADE2" />
+
+            <!-- Espaço central -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="0.5" />
+
+            <!-- Botão Direito -->
+            <Button
+                android:id="@+id/btnConcluir"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Concluir"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#5DADE2" />
+
+            <!-- Espaço direito -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="0.5" />
+        </LinearLayout>
+
+        <!-- Texto "Escreva aqui" -->
+        <TextView
+            android:id="@+id/tvEscrevaAqui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Escreva aqui"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Campo de texto multilinha -->
+        <EditText
+            android:id="@+id/etMaisSobreVoce"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:hint="Digite sobre você..."
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
+            android:gravity="top|start"
+            android:inputType="textMultiLine"
+            android:maxLength="2000"
+            android:overScrollMode="always"
+            android:scrollbars="vertical" />
+
+        <!-- Espaço final para respiro -->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+    </LinearLayout>
+</ScrollView>
