@@ -10,7 +10,8 @@ object ChatRetrofit {
     // ⬇️ ESCOLHA CERTO:
     // Emulador Android Studio:  use "http://10.0.2.2:8080/"
     // Dispositivo físico:       use "http://192.168.0.179:8080/" (ou o IP real do PC)
-    private const val BASE_URL = "http://192.168.0.179:8080/"   // ajuste aqui
+    private const val BASE_URL =  "https://auramind-api-v2.onrender.com/"
+"   // ajuste aqui
 
     private val client by lazy {
         val logger = HttpLoggingInterceptor().apply {
