@@ -8,6 +8,9 @@ android {
     namespace = "com.app.auramind"
     compileSdk = 36
 
+
+        // 🔧 Ajuste para seus domínios do Render (com barra no final):
+
     defaultConfig {
         applicationId = "com.app.auramind"
         minSdk = 26
@@ -16,6 +19,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "BASE_URL_CORE", "\"https://auramind-api-v2.onrender.com\"") // Java (auth/diary)
+        buildConfigField("String", "BASE_URL_AUDIO", "\"https://auramindapi.onrender.com\"") // FastAPI (prever/ultima_emocao)
+
     }
 
     buildTypes {
@@ -36,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

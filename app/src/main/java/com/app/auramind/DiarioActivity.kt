@@ -6,7 +6,11 @@ import android.widget.*
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import com.app.auramind.chat.*
-
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.app.auramind.chat.DiaryApiService
+import com.app.auramind.chat.DiaryReq
+import com.app.auramind.chat.ChatRetrofit
 import androidx.activity.ComponentActivity
 import com.app.auramind.network.ApiResponse
 import com.app.auramind.network.RetrofitClient
@@ -156,30 +160,30 @@ class DiarioActivity : ComponentActivity() {
     }
 
     private fun enviarFluxoCompleto(texto: String) {
-        val userId = getOrCreateUserId()
-        val req = ChatRequest(userId = userId, message = texto)
+        val diaryApi = ChatRetrofit.build(this).create(DiaryApiService::class.java)
 
-        ChatRetrofit.api.sendMessage(req).enqueue(object: Callback<ChatResponse> {
-            override fun onResponse(call: Call<ChatResponse>, response: Response<ChatResponse>) {
-                if (response.isSuccessful) {
-                    val reply = response.body()?.botReply ?: "A IA não enviou nenhuma resposta."
-                    showDialog("Resposta da IA", reply)
-                } else {
-                    val errBody = try { response.errorBody()?.string() ?: "" } catch (_: Exception) { "" }
-                    showDialog(
-                        "Erro (POST)",
-                        "Falha ao enviar.\nHTTP ${response.code()} ${response.message()}\n${if (errBody.isNotBlank()) "Detalhe: $errBody" else ""}"
-                    )
-                }
+        // 1) Mostra a mensagem do usuário na UI (seu código já faz)
+        // 2) Chama a API
+        lifecycleScope.launch {
+            try {
+                val res = diaryApi.sendDiaryMessage(DiaryReq(texto))
+                val ai = res.aiReply.ifBlank { "A IA não enviou nenhuma resposta." }
+
+                // 3) Remove a última mensagem do usuário (da lista/adapter) e
+                // 4) Adiciona a mensagem da IA
+                // -> Aqui deixo dois exemplos, porque não vi seu adapter no zip:
+                // EXEMPLO A: Se você usa um EditText único (páginas), só limpa o texto:
+                etDiario.setText("") // "apagar a msg anterior do usuário"
+                // EXEMPLO B: se você usa uma Recycler/List de mensagens, remova o último item "do usuário" e adicione o "da IA".
+
+                // 5) Mostra a resposta na UI. Se você tem Recycler, adicione DIÁRIO-IA:
+                showDialog("Resposta da IA", ai)
+            } catch (e: Exception) {
+                showDialog("Erro", "Não foi possível se conectar à IA agora.")
             }
-            override fun onFailure(call: Call<ChatResponse>, t: Throwable) {
-                showDialog(
-                    "Erro de Conexão",
-                    "Não foi possível se conectar com a IA.\n${t::class.java.simpleName}: ${t.message ?: "sem detalhe"}"
-                )
-            }
-        })
+        }
     }
+
 
 
 

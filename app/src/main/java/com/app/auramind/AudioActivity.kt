@@ -1,4 +1,5 @@
 package com.app.auramind
+import com.app.auramind.util.EmotionMapper
 
 import android.Manifest
 import android.content.Intent
@@ -228,12 +229,31 @@ class AudioActivity : ComponentActivity() {
             override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                 val tv = findViewById<TextView>(R.id.tvResultado)
                 if (response.isSuccessful) {
-                    val emocao = response.body()?.emocao_detectada ?: "Indefinida"
-                    tv.text = "🎭 Emoção detectada: $emocao"
-                    Toast.makeText(this@AudioActivity, tv.text, Toast.LENGTH_LONG).show()
+                    val emocaoEn = response.body()?.emocao_detectada ?: "undefined"
+                    val pack = EmotionMapper.map(emocaoEn)
+
+                    // Mostra PT-BR
+                    val tv = findViewById<TextView>(R.id.tvResultado)
+                    tv.text = "🎭 Emoção: ${pack.emotionPt}"
+
+                    // Abre sugestões (áudio e vídeo) já com links corretos:
+                    val iAudio = Intent(this@AudioActivity, AudioSugestaoActivity::class.java).apply {
+                        putExtra("extra_spotify_url_1", pack.audio.getOrNull(0) ?: "")
+                        putExtra("extra_spotify_url_2", pack.audio.getOrNull(1) ?: "")
+                        putExtra("extra_spotify_url_3", pack.audio.getOrNull(2) ?: "")
+                    }
+                    startActivity(iAudio)
+
+                    val iVideo = Intent(this@AudioActivity, VideoSugestaoActivity::class.java).apply {
+                        putExtra("extra_video_url_1", pack.video.getOrNull(0) ?: "")
+                        putExtra("extra_video_url_2", pack.video.getOrNull(1) ?: "")
+                        putExtra("extra_video_url_3", pack.video.getOrNull(2) ?: "")
+                    }
+                    startActivity(iVideo)
                 } else {
-                    tv.text = "⚠️ Erro da API (${response.code()})"
+                    findViewById<TextView>(R.id.tvResultado).text = "⚠️ Erro da API (${response.code()})"
                 }
+
             }
 
             override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
