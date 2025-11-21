@@ -22,6 +22,7 @@ android {
 
         buildConfigField("String", "BASE_URL_CORE", "\"https://auramind-api-v2.onrender.com\"") // Java (auth/diary)
         buildConfigField("String", "BASE_URL_AUDIO", "\"https://auramindapi.onrender.com\"") // FastAPI (prever/ultima_emocao)
+        buildConfigField("String", "BASE_URL_AUDIO", "\"https://auramind-escala-service.onrender.com\"") // FastAPI (prever/ultima_emocao)
 
     }
 

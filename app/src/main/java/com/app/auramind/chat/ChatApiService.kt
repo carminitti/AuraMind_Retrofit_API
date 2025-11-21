@@ -7,9 +7,26 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ChatApiService {
-    @POST("api/chat")
-    fun sendMessage(@Body request: ChatRequest): Call<ChatResponse>
+    data class MessageDTO(
+        val role: String,
+        val content: String
+    )
 
-    @GET("api/chat/last")
-    fun getLast(@Query("userId") userId: String): Call<ChatResponse>
+    data class ChatRequest(
+        val userId: String,
+        val message: String,
+        val history: List<MessageDTO> = emptyList(),
+        val profileContext: String = ""
+    )
+
+    data class ChatResponse(
+        val userId: String,
+        val message: String,
+        val botReply: String
+    )
+
+    interface ChatApiService {
+        @POST("chat")
+        suspend fun enviarMensagem(@Body request: ChatRequest): ChatResponse
+    }
 }
