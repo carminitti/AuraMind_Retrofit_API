@@ -30,7 +30,8 @@ class NovaConta : ComponentActivity() {
         val btnCriar    = findViewById<Button>(R.id.btnNProximo)
 
         // API Java (core)
-        val authApi = ChatRetrofit.build(this).create(AuthApiService::class.java)
+        val authApi = ChatRetrofit.build(this, requireAuth = false)
+            .create(AuthApiService::class.java)
 
         btnCriar.setOnClickListener {
             val email         = editNLogin.text.toString().trim()

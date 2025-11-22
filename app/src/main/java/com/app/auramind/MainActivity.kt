@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
         val btnConfirmar  = findViewById<Button>(R.id.btnConfirmar)
         val txtCriarConta = findViewById<TextView>(R.id.txtCriarConta)
 
-        val authApi = ChatRetrofit.build(this).create(AuthApiService::class.java)
+        val authApi = ChatRetrofit.build(this, requireAuth = false)
+            .create(AuthApiService::class.java)
 
         // Auto-login se já tiver token salvo
         // Verifica token, mas NÃO redireciona automaticamente
