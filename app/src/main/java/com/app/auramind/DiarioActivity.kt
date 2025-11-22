@@ -160,27 +160,41 @@ class DiarioActivity : ComponentActivity() {
     }
 
     private fun enviarFluxoCompleto(texto: String) {
-        val diaryApi = ChatRetrofit.build(this).create(DiaryApiService::class.java)
+        try {
+            // Se o usuário não estiver logado, ChatRetrofit.build(this)
+            // deve lançar IllegalStateException (conforme combinamos no ChatRetrofit.kt)
+            val diaryApi = ChatRetrofit.build(this).create(DiaryApiService::class.java)
 
-        // 1) Mostra a mensagem do usuário na UI (seu código já faz)
-        // 2) Chama a API
-        lifecycleScope.launch {
-            try {
-                val res = diaryApi.sendDiaryMessage(DiaryReq(texto))
-                val ai = res.aiReply.ifBlank { "A IA não enviou nenhuma resposta." }
+            // 1) Mostra a mensagem do usuário na UI (isso você já faz antes de chamar essa função)
+            // 2) Chama a API
+            lifecycleScope.launch {
+                try {
+                    val res = diaryApi.sendDiaryMessage(DiaryReq(texto))
+                    val ai = res.aiReply.ifBlank { "A IA não enviou nenhuma resposta." }
 
-                // 3) Remove a última mensagem do usuário (da lista/adapter) e
-                // 4) Adiciona a mensagem da IA
-                // -> Aqui deixo dois exemplos, porque não vi seu adapter no zip:
-                // EXEMPLO A: Se você usa um EditText único (páginas), só limpa o texto:
-                etDiario.setText("") // "apagar a msg anterior do usuário"
-                // EXEMPLO B: se você usa uma Recycler/List de mensagens, remova o último item "do usuário" e adicione o "da IA".
+                    // 3) "Apaga" o texto digitado pelo usuário
+                    etDiario.setText("")
 
-                // 5) Mostra a resposta na UI. Se você tem Recycler, adicione DIÁRIO-IA:
-                showDialog("Resposta da IA", ai)
-            } catch (e: Exception) {
-                showDialog("Erro", "Não foi possível se conectar à IA agora.")
+                    // 4) Mostra a resposta da IA
+                    showDialog("Resposta da IA", ai)
+                } catch (e: Exception) {
+                    showDialog("Erro", "Não foi possível se conectar à IA agora.")
+                }
             }
+
+        } catch (e: IllegalStateException) {
+            // Cai aqui se não tiver JWT salvo (usuário não logado)
+            AlertDialog.Builder(this)
+                .setTitle("Sessão expirada")
+                .setMessage("Por segurança, faça login novamente.")
+                .setCancelable(false)
+                .setPositiveButton("OK") { _, _ ->
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+                .show()
         }
     }
 

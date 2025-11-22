@@ -35,23 +35,15 @@ class MainActivity : ComponentActivity() {
         val authApi = ChatRetrofit.build(this).create(AuthApiService::class.java)
 
         // Auto-login se já tiver token salvo
+        // Verifica token, mas NÃO redireciona automaticamente
         lifecycleScope.launch {
             val token = getToken(this@MainActivity)
             if (!token.isNullOrBlank()) {
-                try {
-                    val me = authApi.me()
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Bem-vindo, ${me.displayName}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    startActivity(Intent(this@MainActivity, DashBoardActivity::class.java))
-                    finish()
-                } catch (_: Exception) {
-                    // token inválido → segue para tela de login normal
-                }
+                // opcional: validar o token silenciosamente
+                try { authApi.me() } catch (_: Exception) {}
             }
         }
+
 
         // LOGIN
         btnConfirmar.setOnClickListener {

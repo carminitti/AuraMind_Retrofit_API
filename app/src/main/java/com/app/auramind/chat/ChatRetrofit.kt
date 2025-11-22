@@ -26,19 +26,26 @@ object ChatRetrofit {
 
     // Cliente Retrofit para a API Java (Auth + Diary)
     fun build(ctx: Context): Retrofit {
+        val token = ctx.getSharedPreferences("auth", Context.MODE_PRIVATE)
+            .getString("jwt", null)
+
+        if (token.isNullOrBlank()) {
+            throw IllegalStateException("Usuário não logado — JWT ausente.")
+        }
+
         val logger = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
         val client = OkHttpClient.Builder()
-            .readTimeout(40, TimeUnit.SECONDS)
-            .writeTimeout(40, TimeUnit.SECONDS)
             .addInterceptor(TokenInterceptor(ctx))
             .addInterceptor(logger)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL_CORE)   // → sua API Java no Render
+            .baseUrl(BuildConfig.BASE_URL_CORE)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
