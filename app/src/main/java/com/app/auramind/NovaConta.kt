@@ -29,8 +29,8 @@ class NovaConta : ComponentActivity() {
         val editCNSenha = findViewById<EditText>(R.id.editNConfirmaSenha)
         val btnCriar    = findViewById<Button>(R.id.btnNProximo)
 
-        // API Java (core)
-        val authApi = ChatRetrofit.build(this, requireAuth = false)
+        // API Java (core) – agora sem requireAuth
+        val authApi = ChatRetrofit.build(this)
             .create(AuthApiService::class.java)
 
         btnCriar.setOnClickListener {
@@ -49,7 +49,7 @@ class NovaConta : ComponentActivity() {
 
             lifecycleScope.launch {
                 try {
-                    // Aqui criamos a conta de verdade no banco via API Java
+                    // Cria a conta via API Java
                     val res = authApi.register(
                         RegisterReq(
                             email = email,
@@ -58,7 +58,7 @@ class NovaConta : ComponentActivity() {
                         )
                     )
 
-                    // Salva JWT para ser usado no interceptor
+                    // Salva JWT para ser usado pelo interceptor
                     saveToken(res.token)
 
                     Toast.makeText(

@@ -32,19 +32,22 @@ class MainActivity : ComponentActivity() {
         val btnConfirmar  = findViewById<Button>(R.id.btnConfirmar)
         val txtCriarConta = findViewById<TextView>(R.id.txtCriarConta)
 
-        val authApi = ChatRetrofit.build(this, requireAuth = false)
+        // Agora o ChatRetrofit.build não recebe mais requireAuth
+        val authApi = ChatRetrofit.build(this)
             .create(AuthApiService::class.java)
 
-        // Auto-login se já tiver token salvo
-        // Verifica token, mas NÃO redireciona automaticamente
+        // Apenas valida silenciosamente se já existe token salvo
+        // (não faz auto login nem redirecionamento automático)
         lifecycleScope.launch {
             val token = getToken(this@MainActivity)
             if (!token.isNullOrBlank()) {
-                // opcional: validar o token silenciosamente
-                try { authApi.me() } catch (_: Exception) {}
+                try {
+                    authApi.me()
+                } catch (_: Exception) {
+                    // Se o token não for mais válido, apenas ignora
+                }
             }
         }
-
 
         // LOGIN
         btnConfirmar.setOnClickListener {
@@ -59,6 +62,7 @@ class MainActivity : ComponentActivity() {
             lifecycleScope.launch {
                 try {
                     val lr = authApi.login(LoginReq(login, senha))
+                    // mantém exatamente o que você já tinha: salva lr.token
                     saveToken(this@MainActivity, lr.token)
 
                     val me = authApi.me()

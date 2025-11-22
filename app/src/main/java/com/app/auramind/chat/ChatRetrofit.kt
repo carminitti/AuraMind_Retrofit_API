@@ -25,32 +25,23 @@ private class TokenInterceptor(private val ctx: Context) : Interceptor {
 object ChatRetrofit {
 
     // Cliente Retrofit para a API Java (Auth + Diary)
-    fun build(ctx: Context, requireAuth: Boolean = true): Retrofit {
-        val prefs = ctx.getSharedPreferences("auth", Context.MODE_PRIVATE)
-        val token = prefs.getString("jwt", null)
-
-        // Só exige JWT se requireAuth = true
-        if (requireAuth && token.isNullOrBlank()) {
-            throw IllegalStateException("Usuário não logado — JWT ausente.")
-        }
+    fun build(ctx: Context): Retrofit {
 
         val logger = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
         val client = OkHttpClient.Builder()
-            .addInterceptor(TokenInterceptor(ctx)) // ainda adiciona header se tiver token
+            .addInterceptor(TokenInterceptor(ctx))
             .addInterceptor(logger)
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL_CORE) // já está com a barra no final
+            .baseUrl(BuildConfig.BASE_URL_CORE) // já está com "/" no final
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
     }
 }
-
-

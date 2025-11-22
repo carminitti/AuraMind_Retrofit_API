@@ -8,19 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import com.app.auramind.chat.*
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import com.app.auramind.chat.DiaryApiService
-import com.app.auramind.chat.DiaryReq
-import com.app.auramind.chat.ChatRetrofit
 import androidx.activity.ComponentActivity
-import com.app.auramind.network.ApiResponse
-import com.app.auramind.network.RetrofitClient
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.File
 
 class DiarioActivity : ComponentActivity() {
 
@@ -41,7 +29,6 @@ class DiarioActivity : ComponentActivity() {
     private lateinit var btnAnterior: ImageButton
     private lateinit var btnProximo: ImageButton
     private lateinit var btnEnviar: Button
-    private lateinit var txtResultado: TextView
     private lateinit var tvTitulo: TextView
     private lateinit var tvVoltar: TextView
     private lateinit var ivVoltar: ImageView
@@ -51,25 +38,8 @@ class DiarioActivity : ComponentActivity() {
         setContentView(R.layout.activity_diario)
 
         btnEnviar = findViewById(R.id.btnEnviar)
-
         etDiario = findViewById(R.id.etDiario)
-
-        btnEnviar.setOnClickListener {
-            val texto = etDiario.text?.toString()?.trim() ?: ""
-            if (texto.isEmpty()) {
-                Toast.makeText(this, "Escreva algo antes de enviar.", Toast.LENGTH_SHORT).show()
-            } else {
-                // guarda (mínimo: SharedPreferences histórico)
-                val prefs = getSharedPreferences("diario_history", Context.MODE_PRIVATE)
-                val prev = prefs.getString("last_text", "")
-                prefs.edit().putString("last_text", texto + "\n" + (prev ?: "")).apply()
-                // limpa campo
-                etDiario.setText("")
-                enviarFluxoCompleto(texto)
-            }
-        }
         btnVoltarRow = findViewById(R.id.btnVoltarRow)
-
         btnAnterior = findViewById(R.id.btnAnterior)
         btnProximo = findViewById(R.id.btnProximo)
         tvTitulo = findViewById(R.id.tvTituloDiario)
@@ -86,22 +56,17 @@ class DiarioActivity : ComponentActivity() {
             paginaAtual = savedIndex.coerceIn(0, MAX_PAGES - 1)
         }
 
-
-
-
-        // Mostra o conteúdo da página atual
         atualizarEditText()
 
-        // "Voltar" (linha inteira clicável)
+        // Voltar para o dashboard
         btnVoltarRow.setOnClickListener {
             salvarPaginaAtual()
-            Toast.makeText(this, "Voltando (o texto será salvo depois no BD)", Toast.LENGTH_SHORT).show()
             val voltarTela = Intent(this, DashBoardActivity::class.java)
             startActivity(voltarTela)
             finish()
         }
 
-        // Ir para a página anterior
+        // Página anterior
         btnAnterior.setOnClickListener {
             salvarPaginaAtual()
             if (paginaAtual > 0) {
@@ -112,7 +77,7 @@ class DiarioActivity : ComponentActivity() {
             }
         }
 
-        // Ir para a próxima página (cria até 3)
+        // Próxima página (até 3)
         btnProximo.setOnClickListener {
             salvarPaginaAtual()
             if (paginaAtual < MAX_PAGES - 1) {
@@ -122,9 +87,23 @@ class DiarioActivity : ComponentActivity() {
                 Toast.makeText(this, "Limite de 3 páginas atingido", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // Enviar texto para a IA
+        btnEnviar.setOnClickListener {
+            val texto = etDiario.text?.toString()?.trim() ?: ""
+            if (texto.isEmpty()) {
+                Toast.makeText(this, "Escreva algo antes de enviar.", Toast.LENGTH_SHORT).show()
+            } else {
+                // guarda histórico simples
+                val prefs = getSharedPreferences("diario_history", Context.MODE_PRIVATE)
+                val prev = prefs.getString("last_text", "")
+                prefs.edit().putString("last_text", texto + "\n" + (prev ?: "")).apply()
+
+                salvarPaginaAtual()
+                enviarFluxoCompleto(texto)
+            }
+        }
     }
-
-
 
     private fun salvarPaginaAtual() {
         paginas[paginaAtual] = etDiario.text.toString()
@@ -141,15 +120,6 @@ class DiarioActivity : ComponentActivity() {
         outState.putStringArrayList(STATE_PAGES, ArrayList(paginas))
         outState.putInt(STATE_INDEX, paginaAtual)
     }
-    private fun getOrCreateUserId(): String {
-        val prefs = getSharedPreferences("auramind_prefs", Context.MODE_PRIVATE)
-        var id = prefs.getString("user_id", null)
-        if (id.isNullOrBlank()) {
-            id = java.util.UUID.randomUUID().toString()
-            prefs.edit().putString("user_id", id).apply()
-        }
-        return id
-    }
 
     private fun showDialog(title: String, msg: String) {
         AlertDialog.Builder(this)
@@ -161,45 +131,37 @@ class DiarioActivity : ComponentActivity() {
 
     private fun enviarFluxoCompleto(texto: String) {
         try {
-            // Se o usuário não estiver logado, ChatRetrofit.build(this)
-            // deve lançar IllegalStateException (conforme combinamos no ChatRetrofit.kt)
+            // Se der erro aqui (Retrofit mal configurado, BASE_URL errada, etc.)
+            // ele cai no catch logo abaixo e NÃO derruba o app.
             val diaryApi = ChatRetrofit.build(this).create(DiaryApiService::class.java)
 
-            // 1) Mostra a mensagem do usuário na UI (isso você já faz antes de chamar essa função)
-            // 2) Chama a API
             lifecycleScope.launch {
                 try {
                     val res = diaryApi.sendDiaryMessage(DiaryReq(texto))
                     val ai = res.aiReply.ifBlank { "A IA não enviou nenhuma resposta." }
 
-                    // 3) "Apaga" o texto digitado pelo usuário
                     etDiario.setText("")
-
-                    // 4) Mostra a resposta da IA
                     showDialog("Resposta da IA", ai)
+
                 } catch (e: Exception) {
-                    showDialog("Erro", "Não foi possível se conectar à IA agora.")
+                    e.printStackTrace()
+                    showDialog(
+                        "Erro",
+                        "Não foi possível se conectar à IA.\n\n" +
+                                "Detalhes: ${e.message ?: "erro desconhecido"}"
+                    )
                 }
             }
 
-        } catch (e: IllegalStateException) {
-            // Cai aqui se não tiver JWT salvo (usuário não logado)
-            AlertDialog.Builder(this)
-                .setTitle("Sessão expirada")
-                .setMessage("Por segurança, faça login novamente.")
-                .setCancelable(false)
-                .setPositiveButton("OK") { _, _ ->
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    finish()
-                }
-                .show()
+        } catch (e: Exception) {
+            // QUALQUER erro antes de entrar na coroutine (ex.: Base URL inválida)
+            e.printStackTrace()
+            showDialog(
+                "Erro de configuração",
+                "Erro ao preparar a conexão com a API.\n\n" +
+                        "Detalhes: ${e.message ?: "erro desconhecido"}"
+            )
+            // não redireciona, só mostra erro
         }
     }
-
-
-
-
-
 }
