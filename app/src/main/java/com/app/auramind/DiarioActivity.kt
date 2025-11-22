@@ -4,7 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import android.content.Context
-import androidx.appcompat.app.AlertDialog
+import android.app.AlertDialog
+
 import com.app.auramind.chat.*
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
