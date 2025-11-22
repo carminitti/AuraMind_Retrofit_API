@@ -49,14 +49,7 @@
                 android:contentDescription="Microfone"
                 android:src="@drawable/ic_microphone_android_48dp" />
 
-            <ImageButton
-                android:id="@+id/btnCamera"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_margin="16dp"
-                android:background="@android:color/transparent"
-                android:contentDescription="Câmera"
-                android:src="@drawable/ic_camera_android_48dp" />
+
         </LinearLayout>
     </LinearLayout>
 

@@ -17,7 +17,7 @@ class DashBoardActivity : ComponentActivity() {
         val navSettings = findViewById<ImageButton>(R.id.navSettings)
         val btnMic = findViewById<ImageButton>(R.id.btnMic)
         val btnLivro = findViewById<ImageButton>(R.id.btnLivro)
-        val btnCamera = findViewById<ImageButton>(R.id.btnCamera)
+
 
         // Clicou na imagem do MICROFONE
         btnMic.setOnClickListener {
@@ -34,11 +34,6 @@ class DashBoardActivity : ComponentActivity() {
         }
 
         // Clicou na imagem da CAMERA
-        btnCamera.setOnClickListener {
-            val foto = Intent(this, FotoActivity::class.java)
-            startActivity(foto)
-            finish()
-        }
 
         navAgenda.setOnClickListener {
             //Toast.makeText(this, "Agenda clicada", Toast.LENGTH_SHORT).show()

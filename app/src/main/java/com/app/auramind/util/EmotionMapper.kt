@@ -8,30 +8,30 @@ data class EmotionPack(
 
 object EmotionMapper {
     private val happyAudio = listOf(
-        "https://open.spotify.com/playlist/37i9dQZF1DXdPec7aLTmlC",
-        "https://music.youtube.com/playlist?list=PLrW43fNmjaQWdeIP9oVGXKQ8Uu3FZ7yZ9"
+        "https://open.spotify.com/playlist/37i9dQZF1DXdPec7aLTmlC?utm_source=chatgpt.com",
+        "https://open.spotify.com/playlist/1llkez7kiZtBeOw5UjFlJq?utm_source=chatgpt.com"
     )
     private val happyVideo = listOf(
-        "https://www.youtube.com/watch?v=d-diB65scQU",
-        "https://www.youtube.com/watch?v=ru0K8uYEZWw"
+        "https://www.youtube.com/watch?v=ZbZSe6N_BXs&utm_source=chatgpt.com",
+        "https://www.youtube.com/watch?v=J4sjBD1BTq0&utm_source=chatgpt.com"
     )
 
     private val calmAudio = listOf(
-        "https://open.spotify.com/playlist/37i9dQZF1DWU0ScTcjJBdj",
-        "https://music.youtube.com/playlist?list=PLSdoVPM0OwZb5_0G2ZrLNPm9XssA2-2iu"
+        "https://open.spotify.com/playlist/0XE1iNb6u7DOang4zGQvCQvC",
+        "https://open.spotify.com/playlist/4wP1ojJSF4zeoFKKTQAeIy?utm_source=chatgpt.com"
     )
     private val calmVideo = listOf(
-        "https://www.youtube.com/watch?v=2OEL4P1Rz04",
-        "https://www.youtube.com/watch?v=1ZYbU82GVz4"
+        "https://www.youtube.com/watch?v=hlWiI4xVXKY&utm_source=chatgpt.com",
+        "https://www.youtube.com/watch?v=lFcSrYw-ARY&utm_source=chatgpt.com"
     )
 
     private val cheerAudio = listOf(
-        "https://open.spotify.com/playlist/37i9dQZF1DX0kbJZpiYdZl",
-        "https://music.youtube.com/playlist?list=PL6bPxvf5dW5cRH8Jy8zGpl2g3rjvSqG6K"
+        "https://open.spotify.com/playlist/4Hp0GzwtzMsLXITEwU9dhv?utm_source=chatgpt.com",
+        "https://open.spotify.com/playlist/37i9dQZF1EIcqv6dNT3Dgk?utm_source=chatgpt.com"
     )
     private val cheerVideo = listOf(
-        "https://www.youtube.com/watch?v=HgzGwKwLmgM",
-        "https://www.youtube.com/watch?v=Zi_XLOBDo_Y"
+        "https://www.youtube.com/playlist?list=PLWCRiy-hIKsJYh4BAKhEsvWcNIuBFEFZ4&utm_source=chatgpt.com",
+        "https://www.youtube.com/watch?v=uE-TADy-oN0&utm_source=chatgpt.com"
     )
 
     fun map(en: String?): EmotionPack {
