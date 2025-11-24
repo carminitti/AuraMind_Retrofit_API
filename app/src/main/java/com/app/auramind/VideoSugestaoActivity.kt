@@ -10,7 +10,6 @@ import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 
 class VideoSugestaoActivity : ComponentActivity() {
@@ -19,12 +18,10 @@ class VideoSugestaoActivity : ComponentActivity() {
         // 🔑 CHAVES dos extras (não são URLs!)
         const val EXTRA_VIDEO_URL_1 = "extra_video_url_1"
         const val EXTRA_VIDEO_URL_2 = "extra_video_url_2"
-        const val EXTRA_VIDEO_URL_3 = "extra_video_url_3"
 
         // Fallbacks (se nada vier via Intent, usa estes)
         private const val DEFAULT_URL_1 = "https://www.youtube.com/watch?v=bhrxz6kq7qA"
         private const val DEFAULT_URL_2 = "https://www.youtube.com/watch?v=WSLMTSxARbg"
-        private const val DEFAULT_URL_3 = "https://www.youtube.com/watch?v=hO_tjm9i32g"
     }
 
     private lateinit var btnVoltarRow: LinearLayout
@@ -32,7 +29,6 @@ class VideoSugestaoActivity : ComponentActivity() {
     private lateinit var tvVoltar: TextView
     private lateinit var web1: WebView
     private lateinit var web2: WebView
-    private lateinit var web3: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +39,8 @@ class VideoSugestaoActivity : ComponentActivity() {
         tvVoltar     = findViewById(R.id.tvVoltar)
         web1         = findViewById(R.id.webVideo1)
         web2         = findViewById(R.id.webVideo2)
-        web3         = findViewById(R.id.webVideo3)
 
-        // Voltar: DashboardActivity
+        // Voltar: PerfilActivity
         btnVoltarRow.setOnClickListener {
             val intent = Intent(this, PerfilActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -54,14 +49,15 @@ class VideoSugestaoActivity : ComponentActivity() {
         }
 
         // Lê URLs dos extras; se vier vazio, usa os defaults
-        val url1 = (intent.getStringExtra(EXTRA_VIDEO_URL_1)?.trim()).takeUnless { it.isNullOrBlank() } ?: DEFAULT_URL_1
-        val url2 = (intent.getStringExtra(EXTRA_VIDEO_URL_2)?.trim()).takeUnless { it.isNullOrBlank() } ?: DEFAULT_URL_2
-        val url3 = (intent.getStringExtra(EXTRA_VIDEO_URL_3)?.trim()).takeUnless { it.isNullOrBlank() } ?: DEFAULT_URL_3
+        val url1 = intent.getStringExtra(EXTRA_VIDEO_URL_1)?.trim()
+            .takeUnless { it.isNullOrBlank() } ?: DEFAULT_URL_1
+
+        val url2 = intent.getStringExtra(EXTRA_VIDEO_URL_2)?.trim()
+            .takeUnless { it.isNullOrBlank() } ?: DEFAULT_URL_2
 
         // Configura e carrega
         setupWebView(web1, toEmbedHtml(url1))
         setupWebView(web2, toEmbedHtml(url2))
-        setupWebView(web3, toEmbedHtml(url3))
     }
 
     private fun setupWebView(web: WebView, html: String) {
@@ -75,7 +71,6 @@ class VideoSugestaoActivity : ComponentActivity() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 url ?: return false
                 return if (url.startsWith("http")) {
-                    // Abre links externos no navegador do sistema (opcional)
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                     true
                 } else false
@@ -134,15 +129,19 @@ class VideoSugestaoActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        web1.onPause(); web2.onPause(); web3.onPause()
+        web1.onPause()
+        web2.onPause()
     }
+
     override fun onResume() {
         super.onResume()
-        web1.onResume(); web2.onResume(); web3.onResume()
+        web1.onResume()
+        web2.onResume()
     }
+
     override fun onDestroy() {
         super.onDestroy()
-        listOf(web1, web2, web3).forEach { w ->
+        listOf(web1, web2).forEach { w ->
             (w.parent as? android.view.ViewGroup)?.removeView(w)
             w.removeAllViews()
             w.destroy()

@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Título (pode quebrar em 2 linhas) -->
+        <!-- Título -->
         <TextView
             android:id="@+id/tvTitulo"
             android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:gravity="center"
             android:layout_marginBottom="16dp" />
 
-        <!-- Voltar (ícone + texto) -->
+        <!-- Botão de voltar -->
         <LinearLayout
             android:id="@+id/btnVoltarRow"
             android:layout_width="wrap_content"
@@ -51,24 +51,19 @@
                 android:layout_marginStart="6dp" />
         </LinearLayout>
 
-        <!-- Players Spotify (altura típica de embed: 200–380dp) -->
+        <!-- Player 1 -->
         <android.webkit.WebView
             android:id="@+id/webAudio1"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="16dp" />
 
+        <!-- Player 2 -->
         <android.webkit.WebView
             android:id="@+id/webAudio2"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="16dp" />
-
-        <android.webkit.WebView
-            android:id="@+id/webAudio3"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginBottom="8dp" />
 
     </LinearLayout>
 </ScrollView>

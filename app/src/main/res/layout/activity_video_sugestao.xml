@@ -49,23 +49,19 @@
                 android:layout_marginStart="6dp" />
         </LinearLayout>
 
+        <!-- Primeiro vídeo -->
         <android.webkit.WebView
             android:id="@+id/webVideo1"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="16dp" />
 
+        <!-- Segundo vídeo -->
         <android.webkit.WebView
             android:id="@+id/webVideo2"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="16dp" />
-
-        <android.webkit.WebView
-            android:id="@+id/webVideo3"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginBottom="8dp" />
 
     </LinearLayout>
 </ScrollView>
