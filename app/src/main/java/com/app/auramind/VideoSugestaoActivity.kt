@@ -11,15 +11,16 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import com.app.auramind.util.EmotionMapper
 
 class VideoSugestaoActivity : ComponentActivity() {
 
     companion object {
-        // 🔑 CHAVES dos extras (não são URLs!)
+        // 🔑 CHAVES dos extras
         const val EXTRA_VIDEO_URL_1 = "extra_video_url_1"
         const val EXTRA_VIDEO_URL_2 = "extra_video_url_2"
 
-        // Fallbacks (se nada vier via Intent, usa estes)
+        // Fallbacks (se nada vier via Intent / emoção)
         private const val DEFAULT_URL_1 = "https://www.youtube.com/watch?v=bhrxz6kq7qA"
         private const val DEFAULT_URL_2 = "https://www.youtube.com/watch?v=WSLMTSxARbg"
     }
@@ -48,14 +49,34 @@ class VideoSugestaoActivity : ComponentActivity() {
             finish()
         }
 
-        // Lê URLs dos extras; se vier vazio, usa os defaults
-        val url1 = intent.getStringExtra(EXTRA_VIDEO_URL_1)?.trim()
-            .takeUnless { it.isNullOrBlank() } ?: DEFAULT_URL_1
+        // 1) Lê URLs dos extras (podem ser nulas)
+        val extra1 = intent.getStringExtra(EXTRA_VIDEO_URL_1)?.trim()
+        val extra2 = intent.getStringExtra(EXTRA_VIDEO_URL_2)?.trim()
 
-        val url2 = intent.getStringExtra(EXTRA_VIDEO_URL_2)?.trim()
-            .takeUnless { it.isNullOrBlank() } ?: DEFAULT_URL_2
+        // 2) Decide se usa extras, emoção salva, ou defaults
+        val (url1, url2) =
+            if (!extra1.isNullOrBlank() || !extra2.isNullOrBlank()) {
+                // Temos links vindos da Intent
+                val final1 = extra1?.takeIf { it.isNotBlank() } ?: DEFAULT_URL_1
+                val final2 = extra2?.takeIf { it.isNotBlank() } ?: DEFAULT_URL_2
+                final1 to final2
+            } else {
+                // Nada via Intent -> usar EMOÇÃO salva
+                val lastEmotion = getSharedPreferences("emotion", MODE_PRIVATE)
+                    .getString("last_emotion_en", "undefined")
 
-        // Configura e carrega
+                val pack = EmotionMapper.map(lastEmotion)
+
+                val emo1 = pack.video.getOrNull(0)
+                val emo2 = pack.video.getOrNull(1)
+
+                val final1 = emo1 ?: DEFAULT_URL_1
+                val final2 = emo2 ?: DEFAULT_URL_2
+
+                final1 to final2
+            }
+
+        // Configura e carrega os embeds de YouTube
         setupWebView(web1, toEmbedHtml(url1))
         setupWebView(web2, toEmbedHtml(url2))
     }

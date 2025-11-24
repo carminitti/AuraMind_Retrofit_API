@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import com.app.auramind.util.EmotionMapper
 
 class AudioSugestaoActivity : ComponentActivity() {
 
@@ -46,11 +47,32 @@ class AudioSugestaoActivity : ComponentActivity() {
             finish()
         }
 
-        val url1 = intent.getStringExtra(EXTRA_SPOTIFY_URL_1)?.trim()
-            .takeUnless { it.isNullOrBlank() } ?: DEFAULT_1
+        // 1) Lê o que veio da Intent (pode ser nulo)
+        val extra1 = intent.getStringExtra(EXTRA_SPOTIFY_URL_1)?.trim()
+        val extra2 = intent.getStringExtra(EXTRA_SPOTIFY_URL_2)?.trim()
 
-        val url2 = intent.getStringExtra(EXTRA_SPOTIFY_URL_2)?.trim()
-            .takeUnless { it.isNullOrBlank() } ?: DEFAULT_2
+        // 2) Decide a fonte: Intent -> emoção salva -> defaults
+        val (url1, url2) =
+            if (!extra1.isNullOrBlank() || !extra2.isNullOrBlank()) {
+                // Tem pelo menos um link vindo da Intent
+                val final1 = extra1?.takeIf { it.isNotBlank() } ?: DEFAULT_1
+                val final2 = extra2?.takeIf { it.isNotBlank() } ?: DEFAULT_2
+                final1 to final2
+            } else {
+                // Nada veio pela Intent -> usa EMOÇÃO salva
+                val lastEmotion = getSharedPreferences("emotion", MODE_PRIVATE)
+                    .getString("last_emotion_en", "undefined")
+
+                val pack = EmotionMapper.map(lastEmotion)
+
+                val emo1 = pack.audio.getOrNull(0)
+                val emo2 = pack.audio.getOrNull(1)
+
+                val final1 = emo1 ?: DEFAULT_1
+                val final2 = emo2 ?: DEFAULT_2
+
+                final1 to final2
+            }
 
         setupWebView(web1, toEmbedHtml(url1))
         setupWebView(web2, toEmbedHtml(url2))

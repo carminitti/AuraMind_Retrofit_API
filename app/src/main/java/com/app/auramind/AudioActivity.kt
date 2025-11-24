@@ -218,6 +218,7 @@ class AudioActivity : ComponentActivity() {
     }
 
     // === API ===
+    // === API ===
     private fun enviarAudioParaApi(file: File) {
         val retrofit = RetrofitClient.instance
         val api = retrofit.create(ApiService::class.java)
@@ -230,30 +231,29 @@ class AudioActivity : ComponentActivity() {
                 val tv = findViewById<TextView>(R.id.tvResultado)
                 if (response.isSuccessful) {
                     val emocaoEn = response.body()?.emocao_detectada ?: "undefined"
+                    getSharedPreferences("emotion", MODE_PRIVATE)
+                        .edit()
+                        .putString("last_emotion_en", emocaoEn)
+                        .apply()
                     val pack = EmotionMapper.map(emocaoEn)
 
-                    // Mostra PT-BR
-                    val tv = findViewById<TextView>(R.id.tvResultado)
-                    tv.text = "🎭 Emoção: ${pack.emotionPt}"
+                    // Mostra emoção em PT-BR na própria tela
+                    tv.text = "🎭 Emoção detectada: ${pack.emotionPt}"
 
-                    // Abre sugestões (áudio e vídeo) já com links corretos:
-                    val iAudio = Intent(this@AudioActivity, AudioSugestaoActivity::class.java).apply {
-                        putExtra("extra_spotify_url_1", pack.audio.getOrNull(0) ?: "")
-                        putExtra("extra_spotify_url_2", pack.audio.getOrNull(1) ?: "")
-                        putExtra("extra_spotify_url_3", pack.audio.getOrNull(2) ?: "")
-                    }
-                    startActivity(iAudio)
+                    // ❌ NÃO redireciona mais para telas de áudio / vídeo
+                    // Se quiser usar os links depois, você ainda tem:
+                    // pack.audio  -> lista de URLs Spotify
+                    // pack.video  -> lista de URLs YouTube
 
-                    val iVideo = Intent(this@AudioActivity, VideoSugestaoActivity::class.java).apply {
-                        putExtra("extra_video_url_1", pack.video.getOrNull(0) ?: "")
-                        putExtra("extra_video_url_2", pack.video.getOrNull(1) ?: "")
-                        putExtra("extra_video_url_3", pack.video.getOrNull(2) ?: "")
-                    }
-                    startActivity(iVideo)
+                    Toast.makeText(
+                        this@AudioActivity,
+                        "Emoção detectada: ${pack.emotionPt}",
+                        Toast.LENGTH_LONG
+                    ).show()
+
                 } else {
-                    findViewById<TextView>(R.id.tvResultado).text = "⚠️ Erro da API (${response.code()})"
+                    tv.text = "⚠️ Erro da API (${response.code()})"
                 }
-
             }
 
             override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
