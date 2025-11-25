@@ -1,6 +1,7 @@
 package com.app.auramind
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.WebChromeClient
@@ -74,8 +75,27 @@ class AudioSugestaoActivity : ComponentActivity() {
                 final1 to final2
             }
 
+        // aplica tema de cor baseado na emoção
+        aplicarTemaPorEmocao()
+
         setupWebView(web1, toEmbedHtml(url1))
         setupWebView(web2, toEmbedHtml(url2))
+    }
+
+    private fun aplicarTemaPorEmocao() {
+        val lastEmotion = getSharedPreferences("emotion", MODE_PRIVATE)
+            .getString("last_emotion_en", null)
+
+        val pack = EmotionMapper.map(lastEmotion)
+        val corFundo = when (pack.emotionPt) {
+            "Triste" -> Color.parseColor("#455A64")
+            "Feliz"  -> Color.parseColor("#FFB300")
+            "Raiva"  -> Color.parseColor("#D32F2F")
+            "Neutro" -> Color.parseColor("#789C9C")
+            else     -> Color.parseColor("#86A6A3")
+        }
+
+        window.decorView.setBackgroundColor(corFundo)
     }
 
     private fun setupWebView(web: WebView, html: String) {

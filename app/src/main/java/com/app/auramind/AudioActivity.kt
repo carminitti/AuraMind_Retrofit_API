@@ -20,6 +20,8 @@ import com.app.auramind.network.RetrofitClient
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -218,7 +220,6 @@ class AudioActivity : ComponentActivity() {
     }
 
     // === API ===
-    // === API ===
     private fun enviarAudioParaApi(file: File) {
         val retrofit = RetrofitClient.instance
         val api = retrofit.create(ApiService::class.java)
@@ -237,13 +238,11 @@ class AudioActivity : ComponentActivity() {
                         .apply()
                     val pack = EmotionMapper.map(emocaoEn)
 
+                    // 🔹 grava no histórico
+                    adicionarHistoricoEmocao(emocaoEn, pack.emotionPt)
+
                     // Mostra emoção em PT-BR na própria tela
                     tv.text = "🎭 Emoção detectada: ${pack.emotionPt}"
-
-                    // ❌ NÃO redireciona mais para telas de áudio / vídeo
-                    // Se quiser usar os links depois, você ainda tem:
-                    // pack.audio  -> lista de URLs Spotify
-                    // pack.video  -> lista de URLs YouTube
 
                     Toast.makeText(
                         this@AudioActivity,
@@ -284,6 +283,31 @@ class AudioActivity : ComponentActivity() {
                     "❌ Falha na conexão: ${t.message}"
             }
         })
+    }
+
+    // === Histórico de emoções ===
+    private fun adicionarHistoricoEmocao(emocaoEn: String, emocaoPt: String) {
+        val prefs = getSharedPreferences("emotion", MODE_PRIVATE)
+        val atual = prefs.getString("emotion_history", "[]") ?: "[]"
+
+        try {
+            val arr = JSONArray(atual)
+            val obj = JSONObject().apply {
+                put(
+                    "timestamp",
+                    SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date())
+                )
+                put("emotionEn", emocaoEn)
+                put("emotionPt", emocaoPt)
+            }
+            arr.put(obj)
+
+            prefs.edit()
+                .putString("emotion_history", arr.toString())
+                .apply()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     // === Reprodução do áudio ===
