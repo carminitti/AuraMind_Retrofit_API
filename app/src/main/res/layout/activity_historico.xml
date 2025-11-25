@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,14 +18,14 @@
         android:textColor="@android:color/white"
         android:layout_marginBottom="28dp" />
 
-    <!-- Item 1 -->
+    <!-- Item 1: Histórico de problemas -->
     <TextView
         android:id="@+id/tvItemProblemas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="• Histórico de problemas e suas soluções"
         android:textSize="16sp"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/btnVerProblemas"
@@ -39,14 +38,14 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="18dp" />
 
-    <!-- Item 2 -->
+    <!-- Item 2: Histórico de emoções detectadas -->
     <TextView
         android:id="@+id/tvItemConversas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="• Histórico de conversas"
+        android:text="• Histórico de emoções detectadas"
         android:textSize="16sp"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/btnVerConversas"
@@ -110,4 +109,5 @@
             android:background="@android:color/transparent"
             android:contentDescription="Configurações" />
     </LinearLayout>
+
 </LinearLayout>

@@ -17,11 +17,9 @@ import com.app.auramind.util.EmotionMapper
 class VideoSugestaoActivity : ComponentActivity() {
 
     companion object {
-        // 🔑 CHAVES dos extras
         const val EXTRA_VIDEO_URL_1 = "extra_video_url_1"
         const val EXTRA_VIDEO_URL_2 = "extra_video_url_2"
 
-        // Fallbacks (se nada vier via Intent / emoção)
         private const val DEFAULT_URL_1 = "https://www.youtube.com/watch?v=bhrxz6kq7qA"
         private const val DEFAULT_URL_2 = "https://www.youtube.com/watch?v=WSLMTSxARbg"
     }
@@ -42,7 +40,7 @@ class VideoSugestaoActivity : ComponentActivity() {
         web1         = findViewById(R.id.webVideo1)
         web2         = findViewById(R.id.webVideo2)
 
-        // Voltar: PerfilActivity
+        // Voltar para PerfilActivity
         btnVoltarRow.setOnClickListener {
             val intent = Intent(this, PerfilActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -50,19 +48,17 @@ class VideoSugestaoActivity : ComponentActivity() {
             finish()
         }
 
-        // 1) Lê URLs dos extras (podem ser nulas)
+        // URLs vindas da Intent (podem ser nulas/vazias)
         val extra1 = intent.getStringExtra(EXTRA_VIDEO_URL_1)?.trim()
         val extra2 = intent.getStringExtra(EXTRA_VIDEO_URL_2)?.trim()
 
-        // 2) Decide se usa extras, emoção salva, ou defaults
+        // Decide origem das URLs: Intent -> emoção salva -> defaults
         val (url1, url2) =
             if (!extra1.isNullOrBlank() || !extra2.isNullOrBlank()) {
-                // Temos links vindos da Intent
                 val final1 = extra1?.takeIf { it.isNotBlank() } ?: DEFAULT_URL_1
                 val final2 = extra2?.takeIf { it.isNotBlank() } ?: DEFAULT_URL_2
                 final1 to final2
             } else {
-                // Nada via Intent -> usar EMOÇÃO salva
                 val lastEmotion = getSharedPreferences("emotion", MODE_PRIVATE)
                     .getString("last_emotion_en", "undefined")
 
@@ -77,15 +73,56 @@ class VideoSugestaoActivity : ComponentActivity() {
                 final1 to final2
             }
 
-        // aplica tema baseado na emoção
-        aplicarTemaPorEmocao()
+        // Aplica paleta (tema escolhido) ou, se "auto", usa emoção
+        aplicarTemaPorPaletaOuEmocao()
 
-        // Configura e carrega os embeds de YouTube
-        setupWebView(web1, url1)
-        setupWebView(web2, url2)
+        // Configura WebViews
+        setupWebView(web1)
+        setupWebView(web2)
+
+        // Carrega cards com thumbnail + botão play
+        val html1 = buildVideoCardHtml(url1)
+        val html2 = buildVideoCardHtml(url2)
+
+        web1.loadDataWithBaseURL(
+            "https://www.youtube.com",
+            html1,
+            "text/html",
+            "utf-8",
+            null
+        )
+
+        web2.loadDataWithBaseURL(
+            "https://www.youtube.com",
+            html2,
+            "text/html",
+            "utf-8",
+            null
+        )
     }
 
-    private fun aplicarTemaPorEmocao() {
+    /**
+     * Aplica a cor de fundo com base em:
+     * - tema escolhido nas Configurações (auramind_config.theme_mode), OU
+     * - emoção detectada (modo "auto").
+     */
+    private fun aplicarTemaPorPaletaOuEmocao() {
+        val prefsConfig = getSharedPreferences("auramind_config", MODE_PRIVATE)
+        val themeMode = prefsConfig.getString("theme_mode", "auto") ?: "auto"
+
+        val corFundoFixo = when (themeMode) {
+            "light"   -> Color.parseColor("#FAFAFA")
+            "dark"    -> Color.parseColor("#263238")
+            "calm"    -> Color.parseColor("#86A6A3")
+            "vibrant" -> Color.parseColor("#FF7043")
+            else      -> null
+        }
+
+        if (corFundoFixo != null) {
+            window.decorView.setBackgroundColor(corFundoFixo)
+            return
+        }
+
         val lastEmotion = getSharedPreferences("emotion", MODE_PRIVATE)
             .getString("last_emotion_en", null)
 
@@ -101,71 +138,118 @@ class VideoSugestaoActivity : ComponentActivity() {
         window.decorView.setBackgroundColor(corFundo)
     }
 
-    private fun setupWebView(web: WebView, html: String) {
+    /**
+     * Configuração base do WebView.
+     */
+    private fun setupWebView(web: WebView) {
         val ws = web.settings
         ws.javaScriptEnabled = true
         ws.domStorageEnabled = true
         ws.mediaPlaybackRequiresUserGesture = true
         ws.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
 
+        web.webChromeClient = WebChromeClient()
         web.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 url ?: return false
+
+                // Ao clicar, abre o link no app do YouTube / navegador
                 return if (url.startsWith("http")) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    startActivity(intent)
                     true
-                } else false
+                } else {
+                    false
+                }
             }
         }
-        web.webChromeClient = WebChromeClient()
-
-        web.loadDataWithBaseURL(
-            "https://www.youtube.com", html, "text/html", "utf-8", null
-        )
     }
 
-    /** Gera HTML com iframe embed a partir de watch?v=... / youtu.be/... */
-    private fun toEmbedHtml(url: String): String {
-        val embedUrl = toEmbedUrl(url)
+    /**
+     * Monta um HTML simples com:
+     * - Thumbnail do YouTube
+     * - Botão de play central
+     * - Link do vídeo abaixo
+     * - Clique no card abre o vídeo (URL original)
+     */
+    private fun buildVideoCardHtml(url: String): String {
+        val videoId = extractVideoId(url)
+        val thumbUrl = if (videoId != null) {
+            "https://img.youtube.com/vi/$videoId/hqdefault.jpg"
+        } else {
+            // Fallback: thumbnail cinza caso não dê pra extrair ID
+            "https://via.placeholder.com/1280x720.png?text=Vídeo"
+        }
+
+        // HTML do card (thumbnail + play + link)
         return """
             <!DOCTYPE html>
             <html>
-              <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <style>
-                  body { margin:0; background:#86A6A3; }
-                  .wrap { position:relative; width:100%; height:0; padding-bottom:56.25%; }
-                  .wrap iframe {
-                    position:absolute; top:0; left:0; width:100%; height:100%;
-                    border:0;
-                  }
-                </style>
-              </head>
-              <body>
-                <div class="wrap">
-                  <iframe
-                    src="$embedUrl"
-                    title="YouTube video player"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowfullscreen>
-                  </iframe>
+            <head>
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <style>
+                body {
+                  margin: 0;
+                  padding: 16px;
+                  background-color: #86A6A3;
+                  font-family: sans-serif;
+                }
+                .card {
+                  cursor: pointer;
+                }
+                .thumb-wrap {
+                  position: relative;
+                  width: 100%;
+                  overflow: hidden;
+                  border-radius: 12px;
+                }
+                .thumb-wrap img {
+                  width: 100%;
+                  display: block;
+                }
+                .play-icon {
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  font-size: 64px;
+                  color: white;
+                  text-shadow: 0 0 10px rgba(0,0,0,0.7);
+                }
+                .link {
+                  margin-top: 12px;
+                  color: #FFFFFF;
+                  font-size: 14px;
+                  word-wrap: break-word;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="card" onclick="window.location.href = '$url';">
+                <div class="thumb-wrap">
+                  <img src="$thumbUrl" alt="Thumbnail do vídeo">
+                  <div class="play-icon">▶</div>
                 </div>
-              </body>
+                <div class="link">$url</div>
+              </div>
+            </body>
             </html>
         """.trimIndent()
     }
 
-    private fun toEmbedUrl(url: String): String {
-        if (url.contains("/embed/")) return url
+    /**
+     * Extrai o ID do vídeo a partir de formatos comuns do YouTube:
+     * - https://youtu.be/VIDEOID
+     * - https://www.youtube.com/watch?v=VIDEOID
+     */
+    private fun extractVideoId(url: String): String? {
+        val shortRegex = Regex("""https?://youtu\.be/([A-Za-z0-9_\-]+)""")
+        shortRegex.find(url)?.let { return it.groupValues[1] }
 
-        val youtuBe = Regex("""https?://youtu\.be/([A-Za-z0-9_\-]+)""")
-        youtuBe.find(url)?.let { return "https://www.youtube.com/embed/${it.groupValues[1]}" }
+        val watchRegex = Regex("""https?://(www\.)?youtube\.com/watch\?v=([A-Za-z0-9_\-]+)""")
+        watchRegex.find(url)?.let { return it.groupValues[2] }
 
-        val watch = Regex("""https?://(www\.)?youtube\.com/watch\?v=([A-Za-z0-9_\-]+)""")
-        watch.find(url)?.let { return "https://www.youtube.com/embed/${it.groupValues[2]}" }
-
-        return url // fallback
+        return null
     }
 
     override fun onPause() {
