@@ -92,19 +92,52 @@ class DiarioActivity : ComponentActivity() {
         // Enviar texto para a IA
         btnEnviar.setOnClickListener {
             val texto = etDiario.text?.toString()?.trim() ?: ""
-            if (texto.isEmpty()) {
+            if (texto.isBlank()) {
                 Toast.makeText(this, "Escreva algo antes de enviar.", Toast.LENGTH_SHORT).show()
-            } else {
+                return@setOnClickListener
+            }else {
                 // guarda histórico simples
                 val prefs = getSharedPreferences("diario_history", Context.MODE_PRIVATE)
                 val prev = prefs.getString("last_text", "")
                 prefs.edit().putString("last_text", texto + "\n" + (prev ?: "")).apply()
 
-                salvarPaginaAtual()
+
+
+                // Envia texto para IA
                 enviarFluxoCompleto(texto)
+
+                // Limpa o diário após enviar
+                paginas = MutableList(MAX_PAGES) { "" }
+                paginaAtual = 0
+                atualizarEditText()
             }
         }
     }
+    private fun salvarNoHistoricoDiario(userText: String, aiText: String?) {
+        try {
+            val prefs = getSharedPreferences("diario_history", MODE_PRIVATE)
+            val json = prefs.getString("items", "[]")
+            val arr = org.json.JSONArray(json)
+
+            val obj = org.json.JSONObject().apply {
+                put(
+                    "timestamp",
+                    java.text.SimpleDateFormat("dd/MM/yyyy HH:mm")
+                        .format(System.currentTimeMillis())
+                )
+                put("userText", userText)
+                put("aiText", aiText ?: "")
+            }
+
+            arr.put(obj)
+            prefs.edit().putString("items", arr.toString()).apply()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
 
     private fun salvarPaginaAtual() {
         paginas[paginaAtual] = etDiario.text.toString()
@@ -140,6 +173,11 @@ class DiarioActivity : ComponentActivity() {
                 try {
                     val res = diaryApi.sendDiaryMessage(DiaryReq(texto))
                     val ai = res.aiReply.ifBlank { "A IA não enviou nenhuma resposta." }
+
+                    salvarNoHistoricoDiario(
+                        userText = texto,
+                        aiText = ai
+                    )
 
                     etDiario.setText("")
                     showDialog("Resposta da IA", ai)

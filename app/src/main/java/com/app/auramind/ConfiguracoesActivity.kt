@@ -1,19 +1,22 @@
 package com.app.auramind
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import androidx.activity.ComponentActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.*
+import android.provider.Settings
+import android.widget.ImageButton
+import android.widget.Switch
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.core.app.NotificationManagerCompat
 
 class ConfiguracoesActivity : ComponentActivity() {
 
     private val PREFS = "auramind_config"
     private val KEY_NOTIFICACOES = "notificacoes_ativas"
     private val KEY_DADOS = "dados_permitidos"
-    private val KEY_THEME_MODE = "theme_mode"   // 👈 NOVO: modo de tema
+    private val KEY_THEME_MODE = "theme_mode"   // já usado pelas outras telas
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,84 +32,53 @@ class ConfiguracoesActivity : ComponentActivity() {
         switchDados.isChecked = prefs.getBoolean(KEY_DADOS, false)
 
         // ------ AÇÕES DOS SWITCHES ------
+
+        // Notificações
         switchNotificacoes.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(KEY_NOTIFICACOES, isChecked).apply()
-            val msg = if (isChecked) "Notificações ativadas" else "Notificações desativadas"
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
+            if (isChecked) {
+                // Verifica se as notificações do app estão realmente liberadas no sistema
+                val notificacoesAtivas = NotificationManagerCompat.from(this)
+                    .areNotificationsEnabled()
+
+                if (!notificacoesAtivas) {
+                    // Mostra um alerta orientando a habilitar nas configurações do sistema
+                    AlertDialog.Builder(this)
+                        .setTitle("Habilitar notificações")
+                        .setMessage(
+                            "Para que o AuraMind envie avisos e lembretes, " +
+                                    "você precisa habilitar as notificações deste app nas configurações do sistema."
+                        )
+                        .setPositiveButton("Abrir configurações") { _, _ ->
+                            abrirConfigNotificacoesDoApp()
+                        }
+                        .setNegativeButton("Agora não", null)
+                        .show()
+                } else {
+                    Toast.makeText(this, "Notificações ativadas", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Notificações desativadas", Toast.LENGTH_SHORT).show()
+            }
         }
 
+        // Acesso a dados
         switchDados.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(KEY_DADOS, isChecked).apply()
-            val msg = if (isChecked) "Acesso a dados permitido" else "Acesso a dados negado"
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-        }
 
-        // ------ SELETOR DE TEMA (PALETA DE CORES) ------
-        val themeSpinner = findViewById<Spinner?>(R.id.spinnerTema)
-
-        // Só configura se o Spinner existir no XML
-        themeSpinner?.let { spinner ->
-            // Lista de opções exibidas para o usuário
-            val opcoes = listOf(
-                "Automático pela emoção", // auto
-                "Tema claro",             // light
-                "Tema escuro",            // dark
-                "Tema sereno",            // calm
-                "Tema vibrante"           // vibrant
-            )
-
-            val adapter = ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                opcoes
-            ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-
-            spinner.adapter = adapter
-
-            // Lê tema salvo
-            val modoSalvo = prefs.getString(KEY_THEME_MODE, "auto") ?: "auto"
-            val indexSelecao = when (modoSalvo) {
-                "auto"     -> 0
-                "light"    -> 1
-                "dark"     -> 2
-                "calm"     -> 3
-                "vibrant"  -> 4
-                else       -> 0
-            }
-            spinner.setSelection(indexSelecao, false)
-
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val novoModo = when (position) {
-                        0 -> "auto"
-                        1 -> "light"
-                        2 -> "dark"
-                        3 -> "calm"
-                        4 -> "vibrant"
-                        else -> "auto"
-                    }
-
-                    prefs.edit().putString(KEY_THEME_MODE, novoModo).apply()
-
-                    val msg = when (novoModo) {
-                        "auto"    -> "Tema baseado na emoção"
-                        "light"   -> "Tema claro selecionado"
-                        "dark"    -> "Tema escuro selecionado"
-                        "calm"    -> "Tema sereno selecionado"
-                        "vibrant" -> "Tema vibrante selecionado"
-                        else      -> "Tema atualizado"
-                    }
-                    Toast.makeText(this@ConfiguracoesActivity, msg, Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    // nada
-                }
+            if (isChecked) {
+                AlertDialog.Builder(this)
+                    .setTitle("Coleta de dados habilitada")
+                    .setMessage(
+                        "Ao permitir o uso de dados, o AuraMind poderá usar suas entradas " +
+                                "para melhorar as respostas da IA e personalizar sugestões.\n\n" +
+                                "Suas informações não serão compartilhadas com terceiros sem autorização."
+                    )
+                    .setPositiveButton("Entendi", null)
+                    .show()
+            } else {
+                Toast.makeText(this, "Acesso a dados negado", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -134,5 +106,16 @@ class ConfiguracoesActivity : ComponentActivity() {
         navSettings.setOnClickListener {
             Toast.makeText(this, "Você já está nas configurações", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    /**
+     * Abre diretamente a tela de configurações de notificações do app no Android.
+     */
+    private fun abrirConfigNotificacoesDoApp() {
+        val intent = Intent().apply {
+            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        }
+        startActivity(intent)
     }
 }

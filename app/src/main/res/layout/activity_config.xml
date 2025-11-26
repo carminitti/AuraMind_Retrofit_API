@@ -80,51 +80,14 @@
     </LinearLayout>
 
     <!-- Texto Cores -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cores do plano de fundo"
-        android:textSize="16sp"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="8dp"
-        android:layout_gravity="center"/>
+
 
     <!-- Cores do Plano de Fundo -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginBottom="24dp">
 
 
 
-        <ImageView
-            android:id="@+id/btnCores"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_palette_android_48dp"
-            android:layout_marginRight="12dp"/>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cores do plano de fundo"
-        android:textSize="16sp"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="8dp"
-        android:layout_gravity="center"/>
 
     <!-- NOVO: Spinner para selecionar paleta de cores -->
-    <Spinner
-        android:id="@+id/spinnerTema"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:background="@android:color/white"
-        android:spinnerMode="dropdown"
-        android:padding="6dp" />
 
     <!-- Empurra a barra para o rodapé -->
     <Space

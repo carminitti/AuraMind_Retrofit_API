@@ -19,6 +19,16 @@ class HistoricoActivity : ComponentActivity() {
             Toast.makeText(this, "Em breve: histórico de problemas e soluções.", Toast.LENGTH_SHORT).show()
         }
 
+        findViewById<Button>(R.id.btnVerProblemas).setOnClickListener {
+            val msg = carregarHistoricoDiario()
+
+            AlertDialog.Builder(this)
+                .setTitle("Histórico do diário")
+                .setMessage(msg)
+                .setPositiveButton("OK", null)
+                .show()
+        }
+
         findViewById<Button>(R.id.btnVerConversas).setOnClickListener {
             val msg = carregarHistoricoEmocoes()
             AlertDialog.Builder(this)
@@ -52,6 +62,52 @@ class HistoricoActivity : ComponentActivity() {
             finish()
         }
     }
+
+    private fun carregarHistoricoDiario(): String {
+        val prefs = getSharedPreferences("diario_history", MODE_PRIVATE)
+        val json = prefs.getString("items", null) ?: return "Nenhuma entrada registrada no diário ainda."
+
+        return try {
+            val arr = JSONArray(json)
+            if (arr.length() == 0) return "Nenhuma entrada registrada no diário ainda."
+
+            val sb = StringBuilder()
+
+            // Mais recente primeiro
+            for (i in arr.length() - 1 downTo 0) {
+                val obj = arr.getJSONObject(i)
+
+                val ts = obj.optString("timestamp", "-")
+                val userText = obj.optString("userText", null)
+                val aiText = obj.optString("aiText", null)
+                val textoAntigo = obj.optString("texto", null) // compatibilidade com versão antiga
+
+                sb.append("🕒 ").append(ts).append("\n")
+
+                if (!userText.isNullOrBlank() || !aiText.isNullOrBlank()) {
+                    if (!userText.isNullOrBlank()) {
+                        sb.append("Você:\n")
+                        sb.append(userText).append("\n\n")
+                    }
+                    if (!aiText.isNullOrBlank()) {
+                        sb.append("AuraMind:\n")
+                        sb.append(aiText).append("\n\n")
+                    }
+                } else if (!textoAntigo.isNullOrBlank()) {
+                    // Histórico antigo (só texto)
+                    sb.append(textoAntigo).append("\n\n")
+                }
+            }
+
+            sb.toString()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "Erro ao ler o histórico do diário."
+        }
+    }
+
+
 
     private fun carregarHistoricoEmocoes(): String {
         val prefs = getSharedPreferences("emotion", MODE_PRIVATE)

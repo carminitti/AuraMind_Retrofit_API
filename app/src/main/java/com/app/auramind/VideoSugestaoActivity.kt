@@ -173,70 +173,100 @@ class VideoSugestaoActivity : ComponentActivity() {
      * - Clique no card abre o vídeo (URL original)
      */
     private fun buildVideoCardHtml(url: String): String {
-        val videoId = extractVideoId(url)
-        val thumbUrl = if (videoId != null) {
-            "https://img.youtube.com/vi/$videoId/hqdefault.jpg"
-        } else {
-            // Fallback: thumbnail cinza caso não dê pra extrair ID
-            "https://via.placeholder.com/1280x720.png?text=Vídeo"
-        }
 
-        // HTML do card (thumbnail + play + link)
-        return """
-            <!DOCTYPE html>
+        val videoId = extractVideoId(url)
+
+        // Se não deu pra extrair ID → mostra só o link
+        if (videoId == null) {
+            return """
             <html>
-            <head>
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <style>
-                body {
-                  margin: 0;
-                  padding: 16px;
-                  background-color: #86A6A3;
-                  font-family: sans-serif;
-                }
-                .card {
-                  cursor: pointer;
-                }
-                .thumb-wrap {
-                  position: relative;
-                  width: 100%;
-                  overflow: hidden;
-                  border-radius: 12px;
-                }
-                .thumb-wrap img {
-                  width: 100%;
-                  display: block;
-                }
-                .play-icon {
-                  position: absolute;
-                  top: 50%;
-                  left: 50%;
-                  transform: translate(-50%, -50%);
-                  font-size: 64px;
-                  color: white;
-                  text-shadow: 0 0 10px rgba(0,0,0,0.7);
-                }
-                .link {
-                  margin-top: 12px;
-                  color: #FFFFFF;
-                  font-size: 14px;
-                  word-wrap: break-word;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="card" onclick="window.location.href = '$url';">
-                <div class="thumb-wrap">
-                  <img src="$thumbUrl" alt="Thumbnail do vídeo">
-                  <div class="play-icon">▶</div>
-                </div>
-                <div class="link">$url</div>
-              </div>
+            <body style="background:#86A6A3; padding:16px; font-family:sans-serif;">
+                <a href="$url" style="color:white; font-size:16px;">$url</a>
             </body>
             </html>
         """.trimIndent()
-    }
+        }
 
+        val thumbUrl = "https://img.youtube.com/vi/$videoId/hqdefault.jpg"
+
+        // HTML com imagem + fallback automático caso thumbnail não carregue
+        // Se der erro no carregamento → remove o card e mostra só o link
+        return """
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body {
+                    margin: 0;
+                    padding: 16px;
+                    background-color: #86A6A3;
+                    font-family: sans-serif;
+                }
+                .card {
+                    cursor: pointer;
+                }
+                .thumb-wrap {
+                    position: relative;
+                    width: 100%;
+                    overflow: hidden;
+                    border-radius: 12px;
+                    display: block;
+                }
+                .thumb {
+                    width: 100%;
+                    display: block;
+                }
+                .play-icon {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 64px;
+                    color: white;
+                    text-shadow: 0 0 10px rgba(0,0,0,0.7);
+                    pointer-events: none;
+                }
+                .fallback-link {
+                    color:white;
+                    font-size:16px;
+                    display:none;
+                }
+            </style>
+        </head>
+        <body>
+
+            <div class="card" onclick="window.location.href = '$url';">
+                
+                <!-- CARD PRINCIPAL -->
+                <div class="thumb-wrap" id="thumbBox">
+                    <img 
+                        id="thumbImg"
+                        class="thumb"
+                        src="$thumbUrl"
+                        alt="Thumbnail"
+                        onerror="mostrarLink()"
+                    >
+                    <div class="play-icon">▶</div>
+                </div>
+
+                <!-- FALLBACK SOMENTE LINK -->
+                <div id="linkBox" class="fallback-link">
+                    <a href="$url" style="color:white;">$url</a>
+                </div>
+
+            </div>
+
+            <script>
+                function mostrarLink(){
+                    document.getElementById('thumbBox').style.display = 'none';
+                    document.getElementById('linkBox').style.display = 'block';
+                }
+            </script>
+
+        </body>
+        </html>
+    """.trimIndent()
+    }
     /**
      * Extrai o ID do vídeo a partir de formatos comuns do YouTube:
      * - https://youtu.be/VIDEOID

@@ -9,7 +9,7 @@ data class EmotionPack(
 object EmotionMapper {
     private val happyAudio = listOf(
         "https://open.spotify.com/playlist/7egW6I9Z7iS2glkXu7QZ7t?si=ciFHbQL6QYeY-TDqyswJeQ&pi=hOsfH81hSROno&nd=1&dlsi=8cab36bce2964286",
-        "https://open.spotify.com/playlist/7egW6I9Z7iS2glkXu7QZ7t?si=ciFHbQL6QYeY-TDqyswJeQ&pi=hOsfH81hSROno&nd=1&dlsi=f5e134f554464391"
+        "https://open.spotify.com/playlist/3e8fpaIgLMr5Pb5rWYP3VJ?si=o9uJtO6WSTKiMGg2lpB9DA&pi=8LzfHbzITtaHG"
     )
     private val happyVideo = listOf(
         "https://www.youtube.com/watch?si=BexRTtNPOxfq_4y7&v=21mDekTZwsw&feature=youtu.be",
